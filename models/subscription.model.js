@@ -25,11 +25,11 @@ const subscriptionSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: ['news','sport','lifestyle','Entertainment', 'Productivity', 'Health', 'Education', 'Other'],
-        reqired: true,
+        required: true,
     },
     paymentMethod:{
         type: String,
-        reqired: true,
+        required: true,
         trim: true,
     },
     status:{
@@ -41,7 +41,7 @@ const subscriptionSchema = new mongoose.Schema({
     startDate:{
         type: Date,
         required: true,
-        validator: {
+        validate: {
             validator:(value) => value <= new Date(),
             message: 'Start date cannot be in the future',
         }
@@ -49,7 +49,7 @@ const subscriptionSchema = new mongoose.Schema({
     renewalDate:{
         type: Date,
         required: true,
-        validator: {
+        validate: {
             validator: function(value){
                 return value > this.startDate;
             },
@@ -61,10 +61,9 @@ const subscriptionSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
         index: true,
-    },
+    }
 
-
-},    option: { timestamps: true });
+}, { timestamps: true });
 
 //auto calculate renewal date based if missing
 subscriptionSchema.pre('save', function(next){
