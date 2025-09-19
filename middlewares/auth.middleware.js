@@ -30,7 +30,7 @@ const authorize = async (req, res, next) => {
         // Add user info to request object
         req.user = user;
         
-        next();
+        next(); 
     } catch (error) {
         res.status(401).json({ 
             message: 'Unauthorized', 

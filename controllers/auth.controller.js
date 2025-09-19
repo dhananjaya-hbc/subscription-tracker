@@ -48,23 +48,27 @@ export const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const user= await User.findOne({ email });
+        // Add .select('+password') to explicitly retrieve the password hash
+        const user = await User.findOne({ email }).select('+password');
 
         if (!user) {
-            const error = new Error('User not found');
-            error.statusCode = 404;
+            const error = new Error('Invalid credentials'); // Use a generic error
+            error.statusCode = 401;
             throw error;
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            const error = new Error('Invalid password');
+            const error = new Error('Invalid credentials'); // Use a generic error
             error.statusCode = 401;
             throw error;
         }
 
         const token = jwt.sign({ userID: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+        // Manually remove password from the user object before sending it in the response
+        user.password = undefined;
 
         res.status(200).json({
             success: true,
